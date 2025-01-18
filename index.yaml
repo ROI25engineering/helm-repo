@@ -3,12 +3,12 @@ entries:
   simple-service:
   - apiVersion: v2
     appVersion: 1.16.0
-    created: "2025-01-18T14:54:25.900221+01:00"
+    created: "2025-01-18T14:58:22.159532+01:00"
     description: A Helm chart for Kubernetes
     digest: 70e219b485a439ab6e7e492ff9944a2f004371df29154a2f4c7f95edcb0b322c
     name: simple-service
     type: application
     urls:
-    - https://yourusername.github.io/helm-charts/simple-service-0.1.0.tgz
+    - https://yourusername.github.io/helm-repo/simple-service-0.1.0.tgz
     version: 0.1.0
-generated: "2025-01-18T14:54:25.899251+01:00"
+generated: "2025-01-18T14:58:22.158291+01:00"
