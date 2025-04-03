@@ -1,0 +1,14 @@
+apiVersion: v1
+entries:
+  simple-chart:
+  - apiVersion: v2
+    appVersion: 1.16.0
+    created: "2025-04-03T06:40:40.563588+02:00"
+    description: A Helm chart for Kubernetes
+    digest: 694e38728971153ea4afbe7f518bc0bb1c5075f87403336cb571b9b7d3d06723
+    name: simple-chart
+    type: application
+    urls:
+    - http://192.168.0.44:9000/roi25-engineering-helm-simple-chart/simple-chart-0.1.1.tgz
+    version: 0.1.1
+generated: "2025-04-03T06:40:40.562929+02:00"
