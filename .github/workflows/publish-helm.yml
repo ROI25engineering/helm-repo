@@ -7,7 +7,7 @@ on:
 
 jobs:
   publish-helm-chart:
-    runs-on: k8s-self-hosted
+    runs-on: self-hosted, Linux, X64
     
     steps:
       - name: Checkout
