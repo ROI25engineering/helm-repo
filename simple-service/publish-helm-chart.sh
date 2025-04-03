@@ -9,3 +9,14 @@ helm package .
 helm repo index . --url https://lespro-charts.lon1.digitaloceanspaces.com/
 aws s3 cp index.yaml s3://lespro-charts/ --endpoint-url https://lon1.digitaloceanspaces.com --acl public-read
 aws s3 cp "$PACKAGE_NAME" s3://lespro-charts/ --endpoint-url https://lon1.digitaloceanspaces.com --acl public-read
+
+
+helm package . --version 0.1.4
+mc cp ./simple-service-0.1.4.tgz myminio/roi25-engineering-helm-simple-chart/
+helm repo index . --url http://192.168.0.44:9000/roi25-engineering-helm-simple-chart
+mc cp ./index.yaml myminio/roi25-engineering-helm-simple-chart/
+
+# Test:
+helm template . --name-template downloader-ws --namespace downloader-ws-test \
+  --set image.repository=192.168.0.45:5000/downloader-ws \
+  --set image.tag=0.32.0
