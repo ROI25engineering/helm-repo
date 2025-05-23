@@ -9,6 +9,6 @@ entries:
     name: simple-service
     type: application
     urls:
-    - http://192.168.0.44:9000/roi25-engineering-helm-simple-chart/simple-service-0.1.4.tgz
+    - http://192.168.68.44:9000/roi25-engineering-helm-simple-chart/simple-service-0.1.4.tgz
     version: 0.1.4
 generated: "2025-04-03T08:39:32.651905+02:00"
