@@ -42,9 +42,4 @@ jobs:
           echo "NEW_VERSION=${NEW_VERSION}" >> $GITHUB_ENV
           echo $NEW_VERSION
 
-     # - name: Upload to MinIO
-      #  run: |
-       #     mc alias set myminio http://192.168.68.44:9000 ${{ secrets.MINIO_ACCESS_KEY }} ${{ secrets.MINIO_SECRET_KEY }}
-        #    mc cp ${PACKAGE_NAME} myminio/helm-charts/
-         #   helm repo index . --url http://192.168.68.44:9000/helm-charts/
-          #  mc cp index.yaml myminio/helm-charts/
+    
