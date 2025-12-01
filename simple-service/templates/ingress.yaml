@@ -14,13 +14,19 @@ spec:
   ingressClassName: {{ . }}
   {{- end }}
   {{- if .Values.ingress.tls }}
-  tls:
+    {{- $tlsEntriesWithSecret := list }}
     {{- range .Values.ingress.tls }}
+      {{- if .secretName }}
+        {{- $tlsEntriesWithSecret = append $tlsEntriesWithSecret . }}
+      {{- end }}
+    {{- end }}
+    {{- if $tlsEntriesWithSecret }}
+  tls:
+      {{- range $tlsEntriesWithSecret }}
     - hosts:
         {{- range .hosts }}
         - {{ . | quote }}
         {{- end }}
-      {{- if .secretName }}
       secretName: {{ .secretName }}
       {{- end }}
     {{- end }}
