@@ -1,0 +1,46 @@
+{{- if .Values.cronjobs.marketData.enabled }}
+apiVersion: batch/v1
+kind: CronJob
+metadata:
+  name: {{ include "simple-service.fullname" . }}-market-data
+  labels:
+    app.kubernetes.io/name: {{ include "simple-service.name" . }}
+    app.kubernetes.io/instance: {{ .Release.Name }}
+    app.kubernetes.io/component: market-data
+spec:
+  schedule: "{{ .Values.cronjobs.marketData.schedule }}"
+  successfulJobsHistoryLimit: 3
+  failedJobsHistoryLimit: 3
+  startingDeadlineSeconds: 600 
+
+  jobTemplate:
+    spec:
+      {{- if .Values.cronjobs.marketData.backoffLimit }}
+      backoffLimit: {{ .Values.cronjobs.marketData.backoffLimit }}
+      {{- end }}
+      template:
+        metadata:
+          labels:
+            app.kubernetes.io/name: {{ include "simple-service.name" . }}
+            app.kubernetes.io/instance: {{ .Release.Name }}
+            app.kubernetes.io/component: market-data
+        spec:
+          restartPolicy: OnFailure
+          {{- if .Values.cronjobs.marketData.serviceAccountName }}
+          serviceAccountName: {{ .Values.cronjobs.marketData.serviceAccountName }}
+          {{- end }}
+          {{- if .Values.cronjobs.marketData.imagePullSecrets }}
+          imagePullSecrets:
+          {{- range .Values.cronjobs.marketData.imagePullSecrets }}
+            - name: {{ .name }}
+          {{- end }}
+          {{- end }}
+          containers:
+            - name: market-data
+              image: "{{ .Values.cronjobs.marketData.image.repository }}:{{ .Values.cronjobs.marketData.image.tag }}"
+              imagePullPolicy: {{ .Values.cronjobs.marketData.image.pullPolicy }}
+              {{- if .Values.cronjobs.marketData.env }}
+              env:
+              {{- toYaml .Values.cronjobs.marketData.env | nindent 16 }}
+              {{- end }}
+{{- end }}

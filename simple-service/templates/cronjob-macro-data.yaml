@@ -1,0 +1,50 @@
+{{- if .Values.cronjobs.macroData.enabled }}
+apiVersion: batch/v1
+kind: CronJob
+metadata:
+  name: {{ include "simple-service.fullname" . }}-macro-data
+  labels:
+    app.kubernetes.io/name: {{ include "simple-service.name" . }}
+    app.kubernetes.io/instance: {{ .Release.Name }}
+    app.kubernetes.io/component: macro-data
+spec:
+  schedule: "{{ .Values.cronjobs.macroData.schedule }}"
+  successfulJobsHistoryLimit: 3
+  failedJobsHistoryLimit: 3
+  startingDeadlineSeconds: 600 
+
+  jobTemplate:
+    spec:
+      {{- if .Values.cronjobs.macroData.backoffLimit }}
+      backoffLimit: {{ .Values.cronjobs.macroData.backoffLimit }}
+      {{- end }}
+      template:
+        metadata:
+          labels:
+            app.kubernetes.io/name: {{ include "simple-service.name" . }}
+            app.kubernetes.io/instance: {{ .Release.Name }}
+            app.kubernetes.io/component: macro-data
+        spec:
+          restartPolicy: OnFailure
+
+          {{- if .Values.cronjobs.macroData.serviceAccountName }}
+          serviceAccountName: {{ .Values.cronjobs.macroData.serviceAccountName }}
+          {{- end }}
+
+          {{- if .Values.cronjobs.macroData.imagePullSecrets }}
+          imagePullSecrets:
+          {{- range .Values.cronjobs.macroData.imagePullSecrets }}
+            - name: {{ .name }}
+          {{- end }}
+          {{- end }}
+
+          containers:
+            - name: macro-data
+              image: "{{ .Values.cronjobs.macroData.image.repository }}:{{ .Values.cronjobs.macroData.image.tag }}"
+              imagePullPolicy: {{ .Values.cronjobs.macroData.image.pullPolicy }}
+
+              {{- if .Values.cronjobs.macroData.env }}
+              env:
+              {{- toYaml .Values.cronjobs.macroData.env | nindent 16 }}
+              {{- end }}
+{{- end }}
