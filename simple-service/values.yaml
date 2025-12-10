@@ -104,93 +104,34 @@ affinity: {}
 cronjobs:
   marketData:
     enabled: true
-    schedule: "0 6 * * *"
-    backoffLimit: 3                
-    startingDeadlineSeconds: 600   
-    serviceAccountName: ""      
-    image:
-      repository: harbor.stabletrace.io/mvp/market-data
-      tag: "latest"
-      pullPolicy: IfNotPresent
-    imagePullSecrets:
-      - name: harbor-secret
-    env:
-      - name: DATABASE_URL
-        valueFrom:
-          secretKeyRef:
-            name: market-data-secrets
-            key: database_url
-      - name: MARKETSTACK_API_KEY
-        valueFrom:
-          secretKeyRef:
-            name: market-data-secrets
-            key: marketstack_api_key
-      - name: MARKETSTACK_ACCESS_KEY
-        valueFrom:
-          secretKeyRef:
-            name: market-data-secrets
-            key: marketstack_access_key
-      - name: MARKETSTACK_START_DATE
-        value: "2024-01-01"
-      - name: MARKETSTACK_END_DATE
-        value: ""
-      - name: MARKETSTACK_SP500_SYMBOL
-        value: "SPX"
-      - name: MARKETSTACK_NASDAQ_SYMBOL
-        value: "NDX"
 
-      # Optional tuning – empty = use app defaults
-      - name: MARKETSTACK_API_URL
-        value: ""
-      - name: MARKETSTACK_PAGE_LIMIT
-        value: ""
-      - name: MARKETSTACK_INDEX_CONFIG
-        value: ""
-      - name: MARKETSTACK_SYMBOLS
-        value: ""
+    schedule: ""
+    backoffLimit: null
+    startingDeadlineSeconds: null
+    serviceAccountName: ""
+
+    image:
+      repository: ""
+      tag: ""
+      pullPolicy: ""
+
+    imagePullSecrets: []
+
+    env: []
 
   macroData:
     enabled: true
-    schedule: "0 6 * * *"
-    backoffLimit: 3                
-    startingDeadlineSeconds: 600   
-    serviceAccountName: ""   
+
+    schedule: ""
+    backoffLimit: null
+    startingDeadlineSeconds: null
+    serviceAccountName: ""
+
     image:
-      repository: harbor.stabletrace.io/mvp/macro-data
-      tag: "latest"
-      pullPolicy: IfNotPresent
-    imagePullSecrets:
-      - name: harbor-secret
-    env:
-      - name: DATABASE_URL
-        valueFrom:
-          secretKeyRef:
-            name: macro-data-secrets
-            key: database_url
-      - name: FRED_API_KEY
-        valueFrom:
-          secretKeyRef:
-            name: macro-data-secrets
-            key: fred_api_key
-      - name: MACRO_S3_ENDPOINT
-        value: "http://minio.minio.svc:9000"
-      - name: MACRO_S3_BUCKET
-        value: "macro"
-      - name: MACRO_S3_PREFIX
-        value: "macro/"
-      - name: MACRO_S3_ACCESS_KEY_ID
-        valueFrom:
-          secretKeyRef:
-            name: macro-data-secrets
-            key: macro_s3_access_key_id
-      - name: MACRO_S3_SECRET_ACCESS_KEY
-        valueFrom:
-          secretKeyRef:
-            name: macro-data-secrets
-            key: macro_s3_secret_access_key
-      - name: MACRO_S3_REGION
-        value: ""
-      - name: MACRO_START_DATE
-        value: ""
-      - name: MACRO_RESAMPLE_FREQ
-        value: ""
+      repository: ""
+      tag: ""
+      pullPolicy: ""
+
+    imagePullSecrets: []
+
+    env: []
