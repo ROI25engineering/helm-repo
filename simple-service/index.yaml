@@ -3,12 +3,32 @@ entries:
   simple-service:
   - apiVersion: v2
     appVersion: 1.16.0
-    created: "2025-12-01T18:54:53.1479984+01:00"
+    created: "2025-12-10T19:03:43.472198+01:00"
     description: A Helm chart for Kubernetes
-    digest: 748cee52967d6e5f49ac76f3ee91dccd136ad75bfaaefe7198b99ccfc90a5674
+    digest: 48d114a8be547b7f11a8921438823e089265d503e60064214a71ef115ef0c607
+    name: simple-service
+    type: application
+    urls:
+    - http://192.168.68.45:9000/helm-chart/simple-service-0.1.6.tgz
+    version: 0.1.6
+  - apiVersion: v2
+    appVersion: 1.16.0
+    created: "2025-12-10T19:03:43.471265+01:00"
+    description: A Helm chart for Kubernetes
+    digest: 45b0d55a609351af55969c74791b95e4c5bfa6065a1438da9b05ac2d1a8b5b0a
     name: simple-service
     type: application
     urls:
     - http://192.168.68.45:9000/helm-chart/simple-service-0.1.5.tgz
     version: 0.1.5
-generated: "2025-12-01T18:54:53.1470554+01:00"
+  - apiVersion: v2
+    appVersion: 1.16.0
+    created: "2025-12-10T19:03:43.470872+01:00"
+    description: A Helm chart for Kubernetes
+    digest: 1452d2204fa4b9673af961b5c09eb4bdb3157a8c510ab0062251e4bd5ecf4601
+    name: simple-service
+    type: application
+    urls:
+    - http://192.168.68.45:9000/helm-chart/simple-service-0.1.4.tgz
+    version: 0.1.4
+generated: "2025-12-10T19:03:43.469926+01:00"
