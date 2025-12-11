@@ -100,3 +100,39 @@ volumeMounts: []
 nodeSelector: {}
 tolerations: []
 affinity: {}
+
+cronjobs:
+  defaults:
+    successfulJobsHistoryLimit: 3
+    failedJobsHistoryLimit: 3
+    backoffLimit: 3
+    startingDeadlineSeconds: 600
+    restartPolicy: OnFailure
+    image:
+      pullPolicy: IfNotPresent
+
+  jobs: {}
+  # jobs:
+  #   exampleJob:
+  #     enabled: true
+  #     schedule: "0 * * * *"
+  #     serviceAccountName: "" # defaults to the chart service account when empty
+  #     image:
+  #       repository: my-registry/my-job
+  #       tag: "1.0.0"
+  #       pullPolicy: IfNotPresent
+  #     imagePullSecrets:
+  #       - name: my-registry-secret
+  #     backoffLimit: 3
+  #     startingDeadlineSeconds: 600
+  #     successfulJobsHistoryLimit: 3
+  #     failedJobsHistoryLimit: 3
+  #     restartPolicy: OnFailure
+  #     env:
+  #       - name: EXAMPLE_ENV
+  #         value: "value"
+  #     command:
+  #       - /bin/sh
+  #       - -c
+  #     args:
+  #       - "echo hello"

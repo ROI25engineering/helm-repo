@@ -1,0 +1,95 @@
+{{- /*
+Generic CronJob template that renders every enabled entry under .Values.cronjobs.jobs.
+Shared defaults are picked from .Values.cronjobs.defaults when job specific values are not provided.
+*/ -}}
+{{- $defaults := .Values.cronjobs.defaults | default dict -}}
+{{- $jobs := .Values.cronjobs.jobs | default dict -}}
+{{- range $jobName, $job := $jobs }}
+{{- if $job.enabled }}
+{{- $defaultSuccessfulJobsHistoryLimit := default 3 $defaults.successfulJobsHistoryLimit -}}
+{{- $defaultFailedJobsHistoryLimit := default 3 $defaults.failedJobsHistoryLimit -}}
+{{- $defaultBackoffLimit := default 3 $defaults.backoffLimit -}}
+{{- $defaultStartingDeadlineSeconds := default 600 $defaults.startingDeadlineSeconds -}}
+{{- $defaultRestartPolicy := default "OnFailure" $defaults.restartPolicy -}}
+{{- $defaultPullPolicy := default "IfNotPresent" $defaults.image.pullPolicy -}}
+{{- $imageRepo := $job.image.repository -}}
+{{- $imageTag := default $.Chart.AppVersion $job.image.tag -}}
+apiVersion: batch/v1
+kind: CronJob
+metadata:
+  name: {{ include "simple-service.fullname" $ }}-{{ $jobName | lower | replace "_" "-" }}
+  labels:
+    app.kubernetes.io/name: {{ include "simple-service.name" $ }}
+    app.kubernetes.io/instance: {{ $.Release.Name }}
+    app.kubernetes.io/component: {{ $jobName | lower }}
+spec:
+  schedule: "{{ required (printf "cronjobs.jobs.%s.schedule is required" $jobName) $job.schedule }}"
+  successfulJobsHistoryLimit: {{ default $defaultSuccessfulJobsHistoryLimit $job.successfulJobsHistoryLimit }}
+  failedJobsHistoryLimit: {{ default $defaultFailedJobsHistoryLimit $job.failedJobsHistoryLimit }}
+  jobTemplate:
+    spec:
+      backoffLimit: {{ default $defaultBackoffLimit $job.backoffLimit }}
+      startingDeadlineSeconds: {{ default $defaultStartingDeadlineSeconds $job.startingDeadlineSeconds }}
+      template:
+        metadata:
+          labels:
+            app.kubernetes.io/name: {{ include "simple-service.name" $ }}
+            app.kubernetes.io/instance: {{ $.Release.Name }}
+            app.kubernetes.io/component: {{ $jobName | lower }}
+        spec:
+          serviceAccountName: {{ default (include "simple-service.serviceAccountName" $) $job.serviceAccountName }}
+          restartPolicy: {{ default $defaultRestartPolicy $job.restartPolicy }}
+          {{- if $job.imagePullSecrets }}
+          imagePullSecrets:
+          {{- range $job.imagePullSecrets }}
+            - name: {{ .name }}
+          {{- end }}
+          {{- else if $.Values.imagePullSecrets }}
+          imagePullSecrets:
+          {{- range $.Values.imagePullSecrets }}
+            - name: {{ .name }}
+          {{- end }}
+          {{- end }}
+          containers:
+            - name: {{ $jobName | lower }}
+              image: "{{ required (printf "cronjobs.jobs.%s.image.repository is required" $jobName) $imageRepo }}:{{ $imageTag }}"
+              imagePullPolicy: {{ default $defaultPullPolicy $job.image.pullPolicy }}
+              {{- with $job.command }}
+              command:
+              {{- toYaml . | nindent 14 }}
+              {{- end }}
+              {{- with $job.args }}
+              args:
+              {{- toYaml . | nindent 14 }}
+              {{- end }}
+              {{- if $job.env }}
+              env:
+              {{- toYaml $job.env | nindent 14 }}
+              {{- end }}
+              {{- with $job.resources }}
+              resources:
+              {{- toYaml . | nindent 14 }}
+              {{- end }}
+              {{- with $job.volumeMounts }}
+              volumeMounts:
+              {{- toYaml . | nindent 14 }}
+              {{- end }}
+          {{- with $job.volumes }}
+          volumes:
+          {{- toYaml . | nindent 12 }}
+          {{- end }}
+          {{- with $job.nodeSelector }}
+          nodeSelector:
+          {{- toYaml . | nindent 12 }}
+          {{- end }}
+          {{- with $job.affinity }}
+          affinity:
+          {{- toYaml . | nindent 12 }}
+          {{- end }}
+          {{- with $job.tolerations }}
+          tolerations:
+          {{- toYaml . | nindent 12 }}
+          {{- end }}
+---
+{{- end }}
+{{- end }}

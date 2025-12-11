@@ -3,12 +3,42 @@ entries:
   simple-service:
   - apiVersion: v2
     appVersion: 1.16.0
-    created: "2025-12-01T18:54:53.1479984+01:00"
+    created: "2025-12-11T14:56:14.355718+01:00"
     description: A Helm chart for Kubernetes
-    digest: 748cee52967d6e5f49ac76f3ee91dccd136ad75bfaaefe7198b99ccfc90a5674
+    digest: 24cdef7dfc9d04524c9e1b9221f6afcf48280b5a9de3ba741b349680a7986e6b
     name: simple-service
     type: application
     urls:
-    - http://192.168.68.45:9000/helm-chart/simple-service-0.1.5.tgz
-    version: 0.1.5
-generated: "2025-12-01T18:54:53.1470554+01:00"
+    - http://192.168.68.45:9000/helm-chart/simple-service-0.1.8.tgz
+    version: 0.1.8
+  - apiVersion: v2
+    appVersion: 1.16.0
+    created: "2025-12-11T14:56:14.354819+01:00"
+    description: A Helm chart for Kubernetes
+    digest: a9eac3ed846b01d4156a7b335f14dd5b45909487329dafa86b42ec35c36cb30d
+    name: simple-service
+    type: application
+    urls:
+    - http://192.168.68.45:9000/helm-chart/simple-service-0.1.7.tgz
+    version: 0.1.7
+  - apiVersion: v2
+    appVersion: 1.16.0
+    created: "2025-12-11T14:56:14.356341+01:00"
+    description: A Helm chart for Kubernetes
+    digest: 8d1532810ff5d22336fc0f4b88b3fbe494463fa771b89032ff79e102bf70be8c
+    name: simple-service
+    type: application
+    urls:
+    - http://192.168.68.45:9000/helm-chart/simple-service/simple-service-0.1.7.tgz
+    version: 0.1.7
+  - apiVersion: v2
+    appVersion: 1.16.0
+    created: "2025-12-11T14:56:14.356007+01:00"
+    description: A Helm chart for Kubernetes
+    digest: 890cac5380b0cb939c89d52fea8b4dab4bd483ba298ca39940e75e75df76cc23
+    name: simple-service
+    type: application
+    urls:
+    - http://192.168.68.45:9000/helm-chart/simple-service/simple-service-0.1.6.tgz
+    version: 0.1.6
+generated: "2025-12-11T14:56:14.353517+01:00"
