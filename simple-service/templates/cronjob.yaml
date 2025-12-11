@@ -17,7 +17,7 @@ Shared defaults are picked from .Values.cronjobs.defaults when job specific valu
 apiVersion: batch/v1
 kind: CronJob
 metadata:
-  name: {{ include "simple-service.fullname" $ }}-{{ $jobName | lower | replace "_" "-" }}
+  name: {{ $.Release.Name }}
   labels:
     app.kubernetes.io/name: {{ include "simple-service.name" $ }}
     app.kubernetes.io/instance: {{ $.Release.Name }}
