@@ -12,8 +12,8 @@ Shared defaults are picked from .Values.cronjobs.defaults when job specific valu
 {{- $defaultStartingDeadlineSeconds := default 600 $defaults.startingDeadlineSeconds -}}
 {{- $defaultRestartPolicy := default "OnFailure" $defaults.restartPolicy -}}
 {{- $defaultPullPolicy := default "IfNotPresent" $defaults.image.pullPolicy -}}
-{{- $imageRepo := default .Values.image.repository $job.image.repository -}}
-{{- $imageTag := default (default $.Chart.AppVersion $.Values.image.tag) $job.image.tag -}}
+{{- $imageRepo := $job.image.repository -}}
+{{- $imageTag := default $.Chart.AppVersion $job.image.tag -}}
 apiVersion: batch/v1
 kind: CronJob
 metadata:
