@@ -1,8 +1,19 @@
 {{- /*
-Template generico per tutti i CronJob definiti in .Values.cronjobs
+Generic CronJob template that renders every enabled entry under .Values.cronjobs.jobs.
+Shared defaults are picked from .Values.cronjobs.defaults when job specific values are not provided.
 */ -}}
-{{- range $jobName, $job := .Values.cronjobs }}
+{{- $defaults := .Values.cronjobs.defaults | default dict -}}
+{{- $jobs := .Values.cronjobs.jobs | default dict -}}
+{{- range $jobName, $job := $jobs }}
 {{- if $job.enabled }}
+{{- $defaultSuccessfulJobsHistoryLimit := default 3 $defaults.successfulJobsHistoryLimit -}}
+{{- $defaultFailedJobsHistoryLimit := default 3 $defaults.failedJobsHistoryLimit -}}
+{{- $defaultBackoffLimit := default 3 $defaults.backoffLimit -}}
+{{- $defaultStartingDeadlineSeconds := default 600 $defaults.startingDeadlineSeconds -}}
+{{- $defaultRestartPolicy := default "OnFailure" $defaults.restartPolicy -}}
+{{- $defaultPullPolicy := default "IfNotPresent" $defaults.image.pullPolicy -}}
+{{- $imageRepo := default .Values.image.repository $job.image.repository -}}
+{{- $imageTag := default (default $.Chart.AppVersion $.Values.image.tag) $job.image.tag -}}
 apiVersion: batch/v1
 kind: CronJob
 metadata:
@@ -12,13 +23,13 @@ metadata:
     app.kubernetes.io/instance: {{ $.Release.Name }}
     app.kubernetes.io/component: {{ $jobName | lower }}
 spec:
-  schedule: "{{ $job.schedule }}"
-  successfulJobsHistoryLimit: {{ default 3 $job.successfulJobsHistoryLimit }}
-  failedJobsHistoryLimit: {{ default 3 $job.failedJobsHistoryLimit }}
+  schedule: "{{ required (printf "cronjobs.jobs.%s.schedule is required" $jobName) $job.schedule }}"
+  successfulJobsHistoryLimit: {{ default $defaultSuccessfulJobsHistoryLimit $job.successfulJobsHistoryLimit }}
+  failedJobsHistoryLimit: {{ default $defaultFailedJobsHistoryLimit $job.failedJobsHistoryLimit }}
   jobTemplate:
     spec:
-      backoffLimit: {{ default 3 $job.backoffLimit }}
-      startingDeadlineSeconds: {{ default 600 $job.startingDeadlineSeconds }}
+      backoffLimit: {{ default $defaultBackoffLimit $job.backoffLimit }}
+      startingDeadlineSeconds: {{ default $defaultStartingDeadlineSeconds $job.startingDeadlineSeconds }}
       template:
         metadata:
           labels:
@@ -26,21 +37,59 @@ spec:
             app.kubernetes.io/instance: {{ $.Release.Name }}
             app.kubernetes.io/component: {{ $jobName | lower }}
         spec:
-          restartPolicy: {{ default "OnFailure" $job.restartPolicy }}
+          serviceAccountName: {{ default (include "simple-service.serviceAccountName" $) $job.serviceAccountName }}
+          restartPolicy: {{ default $defaultRestartPolicy $job.restartPolicy }}
           {{- if $job.imagePullSecrets }}
           imagePullSecrets:
           {{- range $job.imagePullSecrets }}
             - name: {{ .name }}
           {{- end }}
+          {{- else if $.Values.imagePullSecrets }}
+          imagePullSecrets:
+          {{- range $.Values.imagePullSecrets }}
+            - name: {{ .name }}
+          {{- end }}
           {{- end }}
           containers:
             - name: {{ $jobName | lower }}
-              image: "{{ $job.image.repository }}:{{ $job.image.tag }}"
-              imagePullPolicy: {{ default "IfNotPresent" $job.image.pullPolicy }}
+              image: "{{ required (printf "cronjobs.jobs.%s.image.repository is required" $jobName) $imageRepo }}:{{ $imageTag }}"
+              imagePullPolicy: {{ default $defaultPullPolicy $job.image.pullPolicy }}
+              {{- with $job.command }}
+              command:
+              {{- toYaml . | nindent 14 }}
+              {{- end }}
+              {{- with $job.args }}
+              args:
+              {{- toYaml . | nindent 14 }}
+              {{- end }}
               {{- if $job.env }}
               env:
               {{- toYaml $job.env | nindent 14 }}
               {{- end }}
+              {{- with $job.resources }}
+              resources:
+              {{- toYaml . | nindent 14 }}
+              {{- end }}
+              {{- with $job.volumeMounts }}
+              volumeMounts:
+              {{- toYaml . | nindent 14 }}
+              {{- end }}
+          {{- with $job.volumes }}
+          volumes:
+          {{- toYaml . | nindent 12 }}
+          {{- end }}
+          {{- with $job.nodeSelector }}
+          nodeSelector:
+          {{- toYaml . | nindent 12 }}
+          {{- end }}
+          {{- with $job.affinity }}
+          affinity:
+          {{- toYaml . | nindent 12 }}
+          {{- end }}
+          {{- with $job.tolerations }}
+          tolerations:
+          {{- toYaml . | nindent 12 }}
+          {{- end }}
 ---
 {{- end }}
 {{- end }}
