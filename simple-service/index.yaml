@@ -3,7 +3,17 @@ entries:
   simple-service:
   - apiVersion: v2
     appVersion: 1.16.0
-    created: "2025-12-11T14:56:14.355718+01:00"
+    created: "2025-12-11T19:18:20.136422+01:00"
+    description: A Helm chart for Kubernetes
+    digest: b78c74e8512778433d01cf7ab0c3eb72c6dc256c006f3420cfed1c9d09df4322
+    name: simple-service
+    type: application
+    urls:
+    - http://192.168.68.45:9000/helm-chart/simple-service-0.1.9.tgz
+    version: 0.1.9
+  - apiVersion: v2
+    appVersion: 1.16.0
+    created: "2025-12-11T19:18:20.135058+01:00"
     description: A Helm chart for Kubernetes
     digest: 24cdef7dfc9d04524c9e1b9221f6afcf48280b5a9de3ba741b349680a7986e6b
     name: simple-service
@@ -13,9 +23,9 @@ entries:
     version: 0.1.8
   - apiVersion: v2
     appVersion: 1.16.0
-    created: "2025-12-11T14:56:14.354819+01:00"
+    created: "2025-12-11T19:18:20.133893+01:00"
     description: A Helm chart for Kubernetes
-    digest: a9eac3ed846b01d4156a7b335f14dd5b45909487329dafa86b42ec35c36cb30d
+    digest: 8d1532810ff5d22336fc0f4b88b3fbe494463fa771b89032ff79e102bf70be8c
     name: simple-service
     type: application
     urls:
@@ -23,22 +33,12 @@ entries:
     version: 0.1.7
   - apiVersion: v2
     appVersion: 1.16.0
-    created: "2025-12-11T14:56:14.356341+01:00"
-    description: A Helm chart for Kubernetes
-    digest: 8d1532810ff5d22336fc0f4b88b3fbe494463fa771b89032ff79e102bf70be8c
-    name: simple-service
-    type: application
-    urls:
-    - http://192.168.68.45:9000/helm-chart/simple-service/simple-service-0.1.7.tgz
-    version: 0.1.7
-  - apiVersion: v2
-    appVersion: 1.16.0
-    created: "2025-12-11T14:56:14.356007+01:00"
+    created: "2025-12-11T19:18:20.133408+01:00"
     description: A Helm chart for Kubernetes
     digest: 890cac5380b0cb939c89d52fea8b4dab4bd483ba298ca39940e75e75df76cc23
     name: simple-service
     type: application
     urls:
-    - http://192.168.68.45:9000/helm-chart/simple-service/simple-service-0.1.6.tgz
+    - http://192.168.68.45:9000/helm-chart/simple-service-0.1.6.tgz
     version: 0.1.6
-generated: "2025-12-11T14:56:14.353517+01:00"
+generated: "2025-12-11T19:18:20.132307+01:00"
