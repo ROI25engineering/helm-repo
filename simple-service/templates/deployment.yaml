@@ -50,7 +50,7 @@ spec:
           {{- end }}
           {{- $envList := list }}
           {{- range $key, $value := .Values.env }}
-          {{- $envList = append $envList (dict "name" $key "value" $value) }}
+          {{- $envList = append $envList (dict "name" $key "value" (printf "%v" $value)) }}
           {{- end }}
           {{- $envList = concat $envList (.Values.extraEnv | default list) }}
           {{- if $envList }}
