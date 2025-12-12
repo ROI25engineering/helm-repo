@@ -12,20 +12,28 @@ imagePullSecrets: []
 nameOverride: ""
 fullnameOverride: ""
 
+# Container command/args overrides (empty = use image defaults)
+command: []
+args: []
+
+# Extra env injected as name/value pairs
 env:
-  MY_VARIABLE: "some-value"
-  ANOTHER_VARIABLE: "another-value"
   # Example environment variables (uncomment and modify as needed):
   # MY_VARIABLE: "some-value"
   # ANOTHER_VARIABLE: "another-value"
 
-#env: []
-#  # Example with a secret reference (uncomment and modify as needed):
-#  # - name: MY_SECRET_VAR
-#  #   valueFrom:
-#  #     secretKeyRef:
-#  #       name: my-secret
-#  #       key: secret-key
+# Extra env entries supporting valueFrom, etc.
+extraEnv: []
+#  - name: MY_SECRET_VAR
+#    valueFrom:
+#      secretKeyRef:
+#        name: my-secret
+#        key: secret-key
+
+# Optional envFrom blocks (e.g. whole secrets/configmaps)
+envFrom: []
+  # - secretRef:
+  #     name: my-secret
 serviceAccount:
   create: true
   automount: true
