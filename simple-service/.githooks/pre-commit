@@ -1,0 +1,14 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+if ! command -v helm >/dev/null 2>&1; then
+  echo "helm is required for Helm unit tests." >&2
+  exit 1
+fi
+
+if ! helm plugin list | grep -q "^unittest"; then
+  echo "helm-unittest plugin is required (helm plugin install https://github.com/helm-unittest/helm-unittest)." >&2
+  exit 1
+fi
+
+helm unittest .

@@ -1,0 +1,39 @@
+suite: cronjob init containers
+templates:
+  - templates/cronjob.yaml
+tests:
+  - it: renders initContainers when provided
+    set:
+      cronjobs:
+        jobs:
+          marketRegimesAnalyst:
+            enabled: true
+            schedule: "*/5 * * * *"
+            image:
+              repository: "repo"
+              tag: "latest"
+            initContainers:
+              - name: "prep"
+                image: "prep:latest"
+    asserts:
+      - isKind:
+          of: CronJob
+      - equal:
+          path: spec.jobTemplate.spec.template.spec.initContainers[0].name
+          value: "prep"
+      - equal:
+          path: spec.jobTemplate.spec.template.spec.initContainers[0].image
+          value: "prep:latest"
+  - it: omits initContainers when not set
+    set:
+      cronjobs:
+        jobs:
+          marketRegimesAnalyst:
+            enabled: true
+            schedule: "*/5 * * * *"
+            image:
+              repository: "repo"
+              tag: "latest"
+    asserts:
+      - notExists:
+          path: spec.jobTemplate.spec.template.spec.initContainers
