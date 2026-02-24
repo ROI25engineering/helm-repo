@@ -1,0 +1,19 @@
+{{- if .Values.traefik.middlewares }}
+{{- $apiVersion := default "traefik.io/v1alpha1" .Values.traefik.apiVersion -}}
+{{- range .Values.traefik.middlewares }}
+---
+apiVersion: {{ $apiVersion }}
+kind: Middleware
+metadata:
+  name: {{ .name }}
+  namespace: {{ default $.Release.Namespace .namespace }}
+  labels:
+    {{- include "simple-service.labels" $ | nindent 4 }}
+  {{- with .annotations }}
+  annotations:
+    {{- toYaml . | nindent 4 }}
+  {{- end }}
+spec:
+  {{- toYaml .spec | nindent 2 }}
+{{- end }}
+{{- end }}

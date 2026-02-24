@@ -1,13 +1,23 @@
 {{- if .Values.ingress.enabled -}}
+{{- $root := . -}}
+{{- $fullname := include "simple-service.fullname" . -}}
+{{- $defaultServicePort := .Values.service.port -}}
+{{- $mainAnnotations := dict -}}
+{{- range $k, $v := (.Values.ingress.annotations | default dict) }}
+{{- $_ := set $mainAnnotations $k $v -}}
+{{- end }}
+{{- with .Values.ingress.middlewareRefs }}
+{{- $_ := set $mainAnnotations "traefik.ingress.kubernetes.io/router.middlewares" (join "," .) -}}
+{{- end }}
 apiVersion: networking.k8s.io/v1
 kind: Ingress
 metadata:
-  name: {{ include "simple-service.fullname" . }}
+  name: {{ $fullname }}
   labels:
     {{- include "simple-service.labels" . | nindent 4 }}
-  {{- with .Values.ingress.annotations }}
+  {{- if $mainAnnotations }}
   annotations:
-    {{- toYaml . | nindent 4 }}
+    {{- toYaml $mainAnnotations | nindent 4 }}
   {{- end }}
 spec:
   {{- with .Values.ingress.className }}
@@ -43,9 +53,72 @@ spec:
             {{- end }}
             backend:
               service:
-                name: {{ include "simple-service.fullname" $ }}
+                name: {{ include "simple-service.fullname" $root }}
                 port:
-                  number: {{ $.Values.service.port }}
+                  number: {{ $defaultServicePort }}
           {{- end }}
     {{- end }}
+{{- range $index, $extra := (.Values.ingress.extraIngresses | default list) }}
+---
+{{- $extraAnnotations := dict }}
+{{- range $k, $v := ($extra.annotations | default dict) }}
+{{- $_ := set $extraAnnotations $k $v }}
+{{- end }}
+{{- with ($extra.middlewareRefs | default list) }}
+{{- $_ := set $extraAnnotations "traefik.ingress.kubernetes.io/router.middlewares" (join "," .) }}
+{{- end }}
+{{- $extraService := default dict $extra.service }}
+{{- $extraServiceName := default $fullname $extraService.name }}
+{{- $extraServicePort := default $defaultServicePort $extraService.port }}
+{{- $extraNameSuffix := default (printf "extra-%d" (add1 $index)) $extra.nameSuffix }}
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: {{ printf "%s-%s" $fullname $extraNameSuffix | trunc 63 | trimSuffix "-" }}
+  labels:
+    {{- include "simple-service.labels" $root | nindent 4 }}
+  {{- if $extraAnnotations }}
+  annotations:
+    {{- toYaml $extraAnnotations | nindent 4 }}
+  {{- end }}
+spec:
+  {{- with (default $root.Values.ingress.className $extra.className) }}
+  ingressClassName: {{ . }}
+  {{- end }}
+  {{- if $extra.tls }}
+    {{- $extraTlsEntriesWithSecret := list }}
+    {{- range $extra.tls }}
+      {{- if .secretName }}
+        {{- $extraTlsEntriesWithSecret = append $extraTlsEntriesWithSecret . }}
+      {{- end }}
+    {{- end }}
+    {{- if $extraTlsEntriesWithSecret }}
+  tls:
+      {{- range $extraTlsEntriesWithSecret }}
+    - hosts:
+        {{- range .hosts }}
+        - {{ . | quote }}
+        {{- end }}
+      secretName: {{ .secretName }}
+      {{- end }}
+    {{- end }}
+  {{- end }}
+  rules:
+    {{- range $extraHost := ($extra.hosts | default list) }}
+    - host: {{ $extraHost.host | quote }}
+      http:
+        paths:
+          {{- range $extraPath := ($extraHost.paths | default list) }}
+          - path: {{ $extraPath.path }}
+            {{- with $extraPath.pathType }}
+            pathType: {{ . }}
+            {{- end }}
+            backend:
+              service:
+                name: {{ $extraServiceName }}
+                port:
+                  number: {{ $extraServicePort }}
+          {{- end }}
+    {{- end }}
+{{- end }}
 {{- end }}

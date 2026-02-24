@@ -51,13 +51,17 @@ service:
   type: ClusterIP
   port: 80
 
-
 ingress:
   enabled: false
   className: ""
   annotations: {}
     # kubernetes.io/ingress.class: nginx
     # kubernetes.io/tls-acme: "true"
+
+  # Traefik middleware references applied to the main ingress router.
+  # Example: ["mynamespace-my-middleware@kubernetescrd"]
+  middlewareRefs: []
+
   hosts:
     - host: chart-example.local
       paths:
@@ -67,6 +71,31 @@ ingress:
   #  - secretName: chart-example-tls
   #    hosts:
   #      - chart-example.local
+
+  # Additional ingress resources (same service by default) to apply route-specific controls.
+  # Example:
+  # extraIngresses:
+  #   - nameSuffix: auth
+  #     middlewareRefs:
+  #       - mynamespace-auth-guard@kubernetescrd
+  #     hosts:
+  #       - host: chart-example.local
+  #         paths:
+  #           - path: /api/auth
+  #             pathType: Prefix
+  extraIngresses: []
+
+# Optional Traefik Middleware CRDs rendered by this chart.
+# Keep apiVersion configurable because some clusters still use traefik.containo.us/v1alpha1.
+traefik:
+  apiVersion: traefik.io/v1alpha1
+  middlewares: []
+  # - name: api-ws-global-ratelimit
+  #   namespace: ""
+  #   spec:
+  #     rateLimit:
+  #       average: 40
+  #       burst: 80
 
 resources: {}
   # We usually recommend not to specify default resources and to leave this as a conscious
