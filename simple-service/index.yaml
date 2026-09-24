@@ -33,6 +33,26 @@ entries:
   cnpg-cluster:
   - apiVersion: v2
     appVersion: "17.7"
+    created: "2026-04-07T19:12:46.755221+02:00"
+    description: CloudNativePG cluster for weavers
+    digest: ffbcaa35a15b1276498c47782aa367127aab6767e14adc0d2e28aa37a80726e8
+    name: cnpg-cluster
+    type: application
+    urls:
+    - http://192.168.68.45:9000/helm-chart/cnpg-cluster-0.1.2.tgz
+    version: 0.1.2
+  - apiVersion: v2
+    appVersion: "17.7"
+    created: "2026-04-07T18:56:00.067494+02:00"
+    description: CloudNativePG cluster for weavers
+    digest: 2756ab5ae474a4ff9b490fb38b74a8e5aaeab73dd57690990873e52c05d5d259
+    name: cnpg-cluster
+    type: application
+    urls:
+    - http://192.168.68.45:9000/helm-chart/cnpg-cluster-0.1.1.tgz
+    version: 0.1.1
+  - apiVersion: v2
+    appVersion: "17.7"
     created: "2026-02-12T16:48:31.113913+01:00"
     description: CloudNativePG cluster for mvp-prod
     digest: 506f333a03bfeefcaca9c77bd6cc1ad6f422127ff300228866a4c4c5e9432005
@@ -40,6 +60,17 @@ entries:
     type: application
     urls:
     - http://192.168.68.45:9000/helm-chart/cnpg-cluster-0.1.0.tgz
+    version: 0.1.0
+  istio-platform:
+  - apiVersion: v2
+    appVersion: 1.0.0
+    created: "2026-03-02T18:09:21.605979+01:00"
+    description: Istio platform traffic and security policies for MVP workloads
+    digest: cff58f8ff95b8b1b848c159e414aae6a59840bf5efbb505e128baf88bd65631d
+    name: istio-platform
+    type: application
+    urls:
+    - http://192.168.68.45:9000/helm-chart/istio-platform-0.1.0.tgz
     version: 0.1.0
   postgresql-ha:
   - annotations:
@@ -139,7 +170,17 @@ entries:
   simple-service:
   - apiVersion: v2
     appVersion: 1.16.0
-    created: "2026-02-24T14:58:16.1078563+01:00"
+    created: "2026-09-24T17:45:57.4342908+01:00"
+    description: A Helm chart for Kubernetes
+    digest: 0a946bcca10659faab70aa0e549c2750fe994bcf569d8f4a00db98b26e33986e
+    name: simple-service
+    type: application
+    urls:
+    - http://192.168.68.45:9000/helm-chart/simple-service-0.1.17.tgz
+    version: 0.1.17
+  - apiVersion: v2
+    appVersion: 1.16.0
+    created: "2026-09-24T17:45:57.4312541+01:00"
     description: A Helm chart for Kubernetes
     digest: 3e7ad58df3b37ecffb809ed3a2e268530c3750778e307f8d65df0a9c75562864
     name: simple-service
@@ -159,7 +200,7 @@ entries:
     version: 0.1.15
   - apiVersion: v2
     appVersion: 1.16.0
-    created: "2026-02-24T14:58:16.1058638+01:00"
+    created: "2026-09-24T17:45:57.4301615+01:00"
     description: A Helm chart for Kubernetes
     digest: d211aa0b8eccfad8b8931fec5f351b96ca3d9c824cc4cd149e3382a818e24fe4
     name: simple-service
@@ -169,7 +210,7 @@ entries:
     version: 0.1.14
   - apiVersion: v2
     appVersion: 1.16.0
-    created: "2026-02-24T14:58:16.1053276+01:00"
+    created: "2026-09-24T17:45:57.4296614+01:00"
     description: A Helm chart for Kubernetes
     digest: 6897a994dedab88b89f9d64fbee4b91c90196231554ec84238451461aa360ec5
     name: simple-service
@@ -177,4 +218,4 @@ entries:
     urls:
     - http://192.168.68.45:9000/helm-chart/simple-service-0.1.13.tgz
     version: 0.1.13
-generated: "2026-02-24T14:58:16.0966208+01:00"
+generated: "2026-09-24T17:45:57.4236635+01:00"
