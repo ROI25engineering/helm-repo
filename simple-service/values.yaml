@@ -3,6 +3,17 @@
 # Declare variables to be passed into your templates.
 
 replicaCount: 1
+
+# Optional deployment strategy override.
+# Useful when hard pod anti-affinity plus limited worker capacity prevents
+# surge pods during rolling updates.
+strategy: {}
+# strategy:
+#   type: RollingUpdate
+#   rollingUpdate:
+#     maxSurge: 0
+#     maxUnavailable: 1
+
 image:
   repository: nginx
   pullPolicy: IfNotPresent
