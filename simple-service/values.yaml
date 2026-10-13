@@ -27,6 +27,23 @@ fullnameOverride: ""
 command: []
 args: []
 
+# Application port exposed by the Service. Extra ports remain pod-only.
+containerPort: 80
+extraContainerPorts: []
+# - name: management
+#   containerPort: 9000
+#   protocol: TCP
+
+# Omitted unless explicitly configured; Kubernetes defaults remain unchanged.
+terminationGracePeriodSeconds: null
+startupProbe: {}
+
+# Opt-in ingress isolation. Requires a network-policy-capable CNI.
+# Empty ingress denies incoming connections selected by the policy.
+networkPolicy:
+  enabled: false
+  ingress: []
+
 # Extra env injected as name/value pairs
 env:
   # Example environment variables (uncomment and modify as needed):
