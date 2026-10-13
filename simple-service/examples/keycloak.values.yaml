@@ -1,0 +1,123 @@
+# Deployment example, not an environment-specific production release.
+# Supply real hostnames, database/secret references and ingress-controller labels.
+fullnameOverride: keycloak
+replicaCount: 1
+# Initial single-node configuration: accept downtime rather than mixed-version
+# overlap during database upgrades. HA needs a separate cluster/upgrade design.
+strategy:
+  type: Recreate
+image:
+  repository: quay.io/keycloak/keycloak
+  tag: "26.8.1"
+args: ["start"]
+containerPort: 8080
+extraContainerPorts:
+  - name: management
+    containerPort: 9000
+    protocol: TCP
+terminationGracePeriodSeconds: 60
+service:
+  type: ClusterIP
+  port: 80
+serviceAccount:
+  automount: false
+securityContext:
+  runAsNonRoot: true
+  allowPrivilegeEscalation: false
+  capabilities:
+    drop: ["ALL"]
+env:
+  KC_DB: postgres
+  KC_HOSTNAME: https://auth.example.com
+  # HTTP is only for the trusted in-cluster TLS-terminating reverse proxy.
+  KC_HTTP_ENABLED: "true"
+  KC_PROXY_HEADERS: xforwarded
+  KC_HEALTH_ENABLED: "true"
+  KC_METRICS_ENABLED: "true"
+  KC_HTTP_MANAGEMENT_SCHEME: http
+  # Single-node baseline; do not scale without configuring distributed caching.
+  KC_CACHE: local
+extraEnv:
+  - name: KC_DB_URL
+    valueFrom:
+      secretKeyRef:
+        name: keycloak-database
+        key: jdbc-url
+  - name: KC_DB_USERNAME
+    valueFrom:
+      secretKeyRef:
+        name: keycloak-database
+        key: username
+  - name: KC_DB_PASSWORD
+    valueFrom:
+      secretKeyRef:
+        name: keycloak-database
+        key: password
+  - name: KC_BOOTSTRAP_ADMIN_USERNAME
+    valueFrom:
+      secretKeyRef:
+        name: keycloak-bootstrap
+        key: username
+  - name: KC_BOOTSTRAP_ADMIN_PASSWORD
+    valueFrom:
+      secretKeyRef:
+        name: keycloak-bootstrap
+        key: password
+startupProbe:
+  httpGet:
+    path: /health/started
+    port: management
+  periodSeconds: 10
+  timeoutSeconds: 5
+  failureThreshold: 60
+readinessProbe:
+  httpGet:
+    path: /health/ready
+    port: management
+  periodSeconds: 10
+  timeoutSeconds: 5
+livenessProbe:
+  httpGet:
+    path: /health/live
+    port: management
+  periodSeconds: 10
+  timeoutSeconds: 5
+  failureThreshold: 3
+resources:
+  requests:
+    cpu: 500m
+    memory: 1Gi
+  limits:
+    cpu: "2"
+    memory: 2Gi
+ingress:
+  # Enable only after configuring the actual hostname, TLS and trusted proxy.
+  enabled: false
+  className: traefik
+  hosts:
+    - host: auth.example.com
+      paths:
+        - path: /realms
+          pathType: Prefix
+        - path: /resources
+          pathType: Prefix
+        - path: /.well-known
+          pathType: Prefix
+  tls:
+    - secretName: keycloak-tls
+      hosts: [auth.example.com]
+networkPolicy:
+  enabled: true
+  # Example selectors: replace with the actual ingress controller identity.
+  # Both selectors in this one entry must match. Management stays pod-only.
+  ingress:
+    - from:
+        - namespaceSelector:
+            matchLabels:
+              kubernetes.io/metadata.name: traefik
+          podSelector:
+            matchLabels:
+              app.kubernetes.io/name: traefik
+      ports:
+        - protocol: TCP
+          port: 8080
