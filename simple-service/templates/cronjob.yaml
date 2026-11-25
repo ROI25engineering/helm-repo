@@ -26,16 +26,28 @@ spec:
   schedule: "{{ required (printf "cronjobs.jobs.%s.schedule is required" $jobName) $job.schedule }}"
   successfulJobsHistoryLimit: {{ default $defaultSuccessfulJobsHistoryLimit $job.successfulJobsHistoryLimit }}
   failedJobsHistoryLimit: {{ default $defaultFailedJobsHistoryLimit $job.failedJobsHistoryLimit }}
+  {{- /* startingDeadlineSeconds belongs to the CronJob spec; batch/v1 Job specs reject it. */}}
+  startingDeadlineSeconds: {{ default $defaultStartingDeadlineSeconds $job.startingDeadlineSeconds }}
   jobTemplate:
     spec:
       backoffLimit: {{ default $defaultBackoffLimit $job.backoffLimit }}
-      startingDeadlineSeconds: {{ default $defaultStartingDeadlineSeconds $job.startingDeadlineSeconds }}
       template:
         metadata:
+          {{- /* Values are quoted: Argo CD Helm parameters turn "false" into a boolean, which metadata rejects. */}}
+          {{- $podAnnotations := merge (deepCopy ($job.podAnnotations | default dict)) ($defaults.podAnnotations | default dict) }}
+          {{- with $podAnnotations }}
+          annotations:
+            {{- range $key, $value := . }}
+            {{ $key }}: {{ $value | toString | quote }}
+            {{- end }}
+          {{- end }}
           labels:
             app.kubernetes.io/name: {{ include "simple-service.name" $ }}
             app.kubernetes.io/instance: {{ $.Release.Name }}
             app.kubernetes.io/component: {{ $jobName | lower }}
+            {{- range $key, $value := merge (deepCopy ($job.podLabels | default dict)) ($defaults.podLabels | default dict) }}
+            {{ $key }}: {{ $value | toString | quote }}
+            {{- end }}
         spec:
           serviceAccountName: {{ default (include "simple-service.serviceAccountName" $) $job.serviceAccountName }}
           restartPolicy: {{ default $defaultRestartPolicy $job.restartPolicy }}
@@ -68,7 +80,14 @@ spec:
               {{- end }}
               {{- if $job.env }}
               env:
-              {{- toYaml $job.env | nindent 14 }}
+              {{- range $job.env }}
+              {{- if hasKey . "value" }}
+                - name: {{ .name }}
+                  value: {{ .value | toString | quote }}
+              {{- else }}
+                - {{- toYaml . | nindent 18 }}
+              {{- end }}
+              {{- end }}
               {{- end }}
               {{- with $job.resources }}
               resources:

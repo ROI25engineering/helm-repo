@@ -131,6 +131,34 @@ class ChartTests(unittest.TestCase):
                 else:
                     self.assertNotIn("initContainers", pod)
 
+    def test_cronjob_spec_is_valid_batch_v1_with_string_metadata_and_env(self):
+        job = {"enabled": True, "schedule": "0 4 * * 1",
+               "image": {"repository": "example", "tag": "1"},
+               "startingDeadlineSeconds": 120,
+               "podAnnotations": {"sidecar.istio.io/inject": False},
+               "podLabels": {"team": "weavers"},
+               "env": [{"name": "FLAG", "value": True},
+                       {"name": "COUNT", "value": 3},
+                       {"name": "SECRET", "valueFrom": {"secretKeyRef": {"name": "s", "key": "k"}}}]}
+        cron = resource(render({"cronjobs": {"jobs": {"example": job}}}), "CronJob")["spec"]
+        self.assertEqual(cron["startingDeadlineSeconds"], 120)
+        self.assertNotIn("startingDeadlineSeconds", cron["jobTemplate"]["spec"])
+        metadata = cron["jobTemplate"]["spec"]["template"]["metadata"]
+        self.assertEqual(metadata["annotations"], {"sidecar.istio.io/inject": "false"})
+        self.assertEqual(metadata["labels"]["team"], "weavers")
+        env = cron["jobTemplate"]["spec"]["template"]["spec"]["containers"][0]["env"]
+        self.assertEqual(env, [
+            {"name": "FLAG", "value": "true"},
+            {"name": "COUNT", "value": "3"},
+            {"name": "SECRET", "valueFrom": {"secretKeyRef": {"name": "s", "key": "k"}}}])
+
+    def test_cronjob_without_pod_metadata_renders_no_annotations(self):
+        job = {"enabled": True, "schedule": "*/5 * * * *",
+               "image": {"repository": "example", "tag": "1"}}
+        cron = resource(render({"cronjobs": {"jobs": {"example": job}}}), "CronJob")["spec"]
+        self.assertEqual(cron["startingDeadlineSeconds"], 600)
+        self.assertNotIn("annotations", cron["jobTemplate"]["spec"]["template"]["metadata"])
+
 
 if __name__ == "__main__":
     unittest.main()
