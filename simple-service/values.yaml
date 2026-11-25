@@ -191,6 +191,9 @@ cronjobs:
   #       - name: my-registry-secret
   #     backoffLimit: 3
   #     startingDeadlineSeconds: 600
+  #     podAnnotations:            # e.g. keep run-to-completion jobs out of the Istio mesh
+  #       sidecar.istio.io/inject: "false"
+  #     podLabels: {}
   #     successfulJobsHistoryLimit: 3
   #     failedJobsHistoryLimit: 3
   #     restartPolicy: OnFailure
